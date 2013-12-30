@@ -427,22 +427,31 @@ var Flowtime = (function ()
 			}
 			else
 			{
-				if (sp == 0)
-				{
-					if (sectionsArray[p - 1] != undefined)
+				var prevIsSpacer = true;
+				while(prevIsSpacer) {
+					if (sp == 0)
 					{
-						p -= 1;
-						sp = sectionsArray[p].length - 1;
+						if (sectionsArray[p - 1] != undefined)
+						{
+							p -= 1;
+							sp = sectionsArray[p].length - 1;
+						}
+						else if (sectionsArray[p - 1] == undefined && _isLoopable == true)
+						{
+							p = sectionsArray.length - 1;
+							sp = sectionsArray[p].length - 1;
+						}
 					}
-					else if (sectionsArray[p - 1] == undefined && _isLoopable == true)
+					else
 					{
-						p = sectionsArray.length - 1;
-						sp = sectionsArray[p].length - 1;
+						sp = Math.max(sp - 1, 0);
 					}
-				}
-				else
-				{
-					sp = Math.max(sp - 1, 0);
+
+					if (Brav1Toolbox.hasClass(sectionsArray[p][sp], 'spacer')) {
+						prevIsSpacer = true;
+					} else {
+						prevIsSpacer = false;
+					}
 				}
 			}
 			return hiliteOrNavigate(sectionsArray[p][sp]);
@@ -1008,6 +1017,9 @@ var Flowtime = (function ()
 			if (Brav1Toolbox.hasClass(e.target, PAGE_THUMB_CLASS))
 			{
 				e.preventDefault();
+				if (Brav1Toolbox.hasClass(e.target,"spacer")) {
+					return;
+				}
 				var pTo = Number(unsafeAttr(e.target.getAttribute("data-section")));
 				var spTo = Number(unsafeAttr(e.target.getAttribute("data-page")));
 				_gotoPage(pTo, spTo);
@@ -1516,6 +1528,17 @@ var Flowtime = (function ()
 	 */
 	function navigateTo(dest, push, linked)
 	{
+		if(Brav1Toolbox.hasClass(dest, 'spacer')) {
+			var nextSibling;
+			while(dest && Brav1Toolbox.hasClass(dest, 'spacer')) {
+				nextSibling = dest.nextSibling;
+				while(nextSibling && nextSibling.nodeType != 1) {
+					nextSibling = nextSibling.nextSibling;
+				}
+				dest = nextSibling;
+			}
+		}
+
 		push = push == false ? push : true;
 		// if dest doesn't exist then go to homepage
 		if (!dest)
@@ -1742,7 +1765,11 @@ var Flowtime = (function ()
 			var spArray = NavigationMatrix.getPages(i)
 			for (var ii = 0; ii < spArray.length; ii++) {
 				var spDiv = document.createElement("div");
-					spDiv.className = PAGE_THUMB_CLASS;
+					className = PAGE_THUMB_CLASS;
+					if(Brav1Toolbox.hasClass(spArray[ii], 'spacer')) {
+						className += ' spacer';
+					}
+					spDiv.className = className;
 					spDiv.setAttribute("data-section", "__" + i);
 					spDiv.setAttribute("data-page", "__" + ii);
 					Brav1Toolbox.addClass(spDiv, "thumb-page-" + ii);

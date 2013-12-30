@@ -219,7 +219,6 @@
 		-webkit-transition: all 0.5s cubic-bezier(.77, .10, .22, 1);
 				transition: all 0.5s cubic-bezier(.77, .10, .22, 1);
 	}
-
 	.ft-page-thumb:hover {
 		background-color: rgba(255,255,255,0.7);
 	}
@@ -275,4 +274,11 @@
 		   -moz-transform: translateZ(0) !important;
 		-webkit-transform: translateZ(0) !important;
 				transform: translateZ(0) !important;
+	}
+
+/* SPACERS */
+	.spacer,
+	.spacer:hover {
+		background: transparent !important;
+		cursor: default !important;
 	}
